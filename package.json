@@ -6,7 +6,7 @@
     "lint": "biome lint --write .",
     "format": "biome format --write .",
     "kysely:migrate": "tsx ./database/kysely/migrate.ts",
-    "prod": "vike build && node ./dist/server/index.mjs"
+    "start": "vike build && tsx ./database/kysely/migrate.ts && node ./dist/server/index.mjs"
   },
   "dependencies": {
     "@auth/core": "^0.41.2",
