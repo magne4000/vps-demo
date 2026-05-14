@@ -1,7 +1,16 @@
-import { Auth, type AuthConfig, createActionURL, setEnvDefaults } from "@auth/core";
+import {
+  Auth,
+  type AuthConfig,
+  createActionURL,
+  setEnvDefaults,
+} from "@auth/core";
 import CredentialsProvider from "@auth/core/providers/credentials";
 import type { Session } from "@auth/core/types";
-import { enhance, type UniversalHandler, type UniversalMiddleware } from "@universal-middleware/core";
+import {
+  enhance,
+  type UniversalHandler,
+  type UniversalMiddleware,
+} from "@universal-middleware/core";
 
 const authjsConfig = {
   basePath: "/api/auth",
@@ -32,17 +41,33 @@ const authjsConfig = {
 /**
  * Retrieve Auth.js session from Request
  */
-export async function getSession(req: Request, config: Omit<AuthConfig, "raw">): Promise<Session | null> {
+export async function getSession(
+  req: Request,
+  config: Omit<AuthConfig, "raw">,
+): Promise<Session | null> {
   setEnvDefaults(process.env, config);
   const requestURL = new URL(req.url);
-  const url = createActionURL("session", requestURL.protocol, req.headers, process.env, config);
+  const url = createActionURL(
+    "session",
+    requestURL.protocol,
+    req.headers,
+    process.env,
+    config,
+  );
 
-  const response = await Auth(new Request(url, { headers: { cookie: req.headers.get("cookie") ?? "" } }), config);
+  const response = await Auth(
+    new Request(url, { headers: { cookie: req.headers.get("cookie") ?? "" } }),
+    config,
+  );
   const data = await response.json();
 
   if (!data || !Object.keys(data).length) return null;
   if (response.status === 200) return data as Session;
-  throw new Error(typeof data === "object" && "message" in data ? (data.message as string) : undefined);
+  throw new Error(
+    typeof data === "object" && "message" in data
+      ? (data.message as string)
+      : undefined,
+  );
 }
 
 // Note: You can directly define a server middleware instead of defining a Universal Middleware. (You can remove @universal-middleware/* — Vike's scaffolder uses it only to simplify its internal logic, see https://github.com/vikejs/vike/discussions/3116)

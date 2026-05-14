@@ -4,7 +4,8 @@ import { useData } from "vike-react/useData";
 
 export function TodoList() {
   const { todoItemsInitial } = useData<Data>();
-  const [todoItems, setTodoItems] = useState<{ text: string }[]>(todoItemsInitial);
+  const [todoItems, setTodoItems] =
+    useState<{ text: string }[]>(todoItemsInitial);
   const [newTodo, setNewTodo] = useState("");
   return (
     <>
