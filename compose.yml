@@ -1,0 +1,33 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      # Relies on postgres image defaults: user=postgres, db=postgres
+      DATABASE_URL: postgresql://postgres:changeme@db:5432/postgres
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      # POSTGRES_USER and POSTGRES_DB are omitted — both default to "postgres"
+      POSTGRES_PASSWORD: changeme
+    volumes:
+      # postgres:18 changed the volume root — target /var/lib/postgresql, not /data
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
