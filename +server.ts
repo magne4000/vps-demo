@@ -9,5 +9,6 @@ export default {
   fetch: app.fetch,
   prod: {
     port,
+    hostname: "0.0.0.0",
   },
 } satisfies Server;
